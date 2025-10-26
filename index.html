@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy 6 Months, my pretty little princess ♡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{ --pink:#ffd9e8; --pink-deep:#ff9ec2; --ink:#402b3a; --shadow:0 20px 50px rgba(64,43,58,.25);} 
+    html,body{height:100%}
+    body{ margin:0; color:var(--ink); font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"; overflow:hidden; background:
+      radial-gradient(circle at 10% 10%, rgba(255,182,193,.50) 0 8px, transparent 9px 100%),
+      radial-gradient(circle at 90% 10%, rgba(255,182,193,.45) 0 6px, transparent 7px 100%),
+      radial-gradient(circle at 20% 80%, rgba(255,182,193,.50) 0 7px, transparent 8px 100%),
+      radial-gradient(circle at 70% 60%, rgba(255,192,203,.40) 0 9px, transparent 10px 100%),
+      radial-gradient(closest-side, rgba(255,240,245,.6), rgba(255,217,230,.6), rgba(255,217,232,.25)), var(--pink);
+      background-size:180px 180px, 200px 200px, 220px 220px, 260px 260px, cover; display:grid; place-items:center; }
+
+    /* Pink dim overlay (keeps card crisp) */
+    #dim{ position:fixed; inset:0; background: rgba(255, 182, 193, 0.35); z-index:1; display:none; pointer-events:none; }
+    body.dimmed #dim{ display:block; }
+
+    /* Fireworks canvas behind the card */
+    #fwCanvas{ position:fixed; inset:0; z-index:0; pointer-events:none; display:none; }
+    body.fireworks #fwCanvas{ display:block; }
+
+    /* Card */
+    .card{ position:relative; z-index:2; width:min(92vw,760px); border-radius:28px; background:linear-gradient(180deg,#fffdfd,#fff7fb); box-shadow:var(--shadow); overflow:hidden; transform-style:preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1), height .7s ease, border-radius .7s ease; }
+    .card-inner{ padding: clamp(18px, 4vw, 40px); }
+    .card.closed{ height:200px; cursor:pointer; border-radius:22px; }
+    .closed .gift-top{ height:72px; background:linear-gradient(90deg,var(--pink-deep),#ffc0d9); display:grid; place-items:center; color:#fff; font-weight:700; letter-spacing:.08em; position:relative; }
+    .closed .gift-top::after{ content:""; position:absolute; inset:0; margin:auto; width:14px; background:rgba(255,255,255,.6); }
+    .closed .gift-body{ display:grid; place-items:center; height: calc(200px - 72px); }
+    .closed .gift-body .cta{ display:inline-block; padding:14px 28px; border-radius:16px; font-weight:600; background:linear-gradient(180deg,#ffe0ec,#ffd0e5); border:2px solid #ffc1dc; box-shadow:0 10px 20px rgba(255,158,194,.35); transform:translateZ(40px); }
+    .closed:hover{ transform: translateY(-3px) scale(1.01); }
+
+    .card.open{ height:auto; }
+    .note h1{ font-family:'Playfair Display',serif; font-weight:900; margin:0 0 .25rem; font-size: clamp(30px, 4vw, 54px); }
+    .note p{ line-height:1.7; margin:.65rem 0; font-size:clamp(15px, 1.1vw, 18px); }
+    .panel{ background:#ffffffcc; backdrop-filter:blur(6px); border:1px solid #f7d0e2; border-radius:20px; padding:18px 18px 16px; }
+    .panel h3{ margin:.1rem 0 .6rem; font-size:1.05rem; font-weight:700; }
+
+    .hearts{ position:fixed; left:0; right:0; bottom:-10px; height:70px; pointer-events:none; z-index:1; opacity:.5; }
+    .hearts::before, .hearts::after{ content:""; position:absolute; inset:0; background:
+      radial-gradient(8px 7px at 10% 60%, #ffb8d2 99%, #0000 101%),
+      radial-gradient(8px 7px at 14% 70%, #ffc3da 99%, #0000 101%),
+      radial-gradient(8px 7px at 23% 50%, #ff9fcb 99%, #0000 101%),
+      radial-gradient(8px 7px at 35% 65%, #ffb8d2 99%, #0000 101%),
+      radial-gradient(8px 7px at 48% 55%, #ffc3da 99%, #0000 101%),
+      radial-gradient(8px 7px at 62% 62%, #ff9fcb 99%, #0000 101%),
+      radial-gradient(8px 7px at 75% 58%, #ffc3da 99%, #0000 101%),
+      radial-gradient(8px 7px at 88% 66%, #ffb8d2 99%, #0000 101%);
+      transform:skewY(-6deg); }
+    .hearts::after{ filter:blur(6px); opacity:.6; transform: translateY(-6px) skewY(-6deg); }
+  </style>
+</head>
+<body>
+  <canvas id="fwCanvas"></canvas>
+  <div id="dim" aria-hidden="true"></div>
+
+  <div class="card closed" id="card" aria-label="Open surprise note">
+    <div class="gift-top">♡ 6 MONTHS ♡</div>
+    <div class="gift-body"><span class="cta">Click me</span></div>
+  </div>
+
+  <div class="hearts" aria-hidden="true"></div>
+
+  <script>
+  const MESSAGE = "To my love and joy,\n\nYou mean the world to me and I'd give anything for your happiness. Your smile and laugh are the only tax for being this adorable and thank you for always communicating with me. I also wanted to say that I really appreciate you for your patience and for loving me even when I make mistakes. I will always cherish your art, your kindness, and the way you hold me in your thoughts every second of everyday.\n\nI love you forever,\n— Ryuichi";
+
+  const card = document.getElementById('card');
+  const body = document.body;
+  const fwCanvas = document.getElementById('fwCanvas');
+  const ctx = fwCanvas.getContext('2d');
+  let W=0,H=0,lastTime=0; let particles=[], rockets=[];
+
+  const random=function(a,b){ return Math.random()*(b-a)+a; };
+  const hsla=function(h,s,l,a){ return 'hsla('+h+','+s+'%,'+l+'%,'+a+')'; };
+  const resize=function(){ W=fwCanvas.width=innerWidth; H=fwCanvas.height=innerHeight; };
+  addEventListener('resize', resize); resize();
+
+  card.addEventListener('click', function(){
+    if(card.classList.contains('open')) return;
+    card.classList.remove('closed'); card.classList.add('open');
+    body.classList.add('dimmed','fireworks');
+    card.innerHTML = '<div class="card-inner note">\
+      <h1>Happy 6 Months, my pretty little princess ✿</h1>\
+      <section class="panel" aria-label="Love note">\
+        <p id="noteText"></p>\
+        <p style="margin-top:12px; font-weight:600;">P.S. Ask your boyfriend about your gift 💝</p>\
+      </section>\
+    </div>';
+    document.getElementById('noteText').textContent = MESSAGE;
+    requestAnimationFrame(tick);
+    setInterval(function(){ for(var k=0;k<2;k++) launch(); if(Math.random()<0.55) skyMine(); }, 320);
+  });
+
+  var launch=function(){
+    var x = random(W*0.10, W*0.90);
+    var y = H + 10;
+    var angleToTop = -Math.PI/2 + random(-0.18, 0.18);
+    var speed = random(10, 13);
+    var vx = Math.cos(angleToTop) * (speed*0.4);
+    var vy = Math.sin(angleToTop) * speed;
+    rockets.push({x:x,y:y,vx:vx,vy:vy,life: random(0.9,1.3), trail:[], color: Math.floor(random(0,360))});
+  };
+
+  var skyMine=function(){ burst(random(W*0.05, W*0.95), random(H*0.10, H*0.85)); };
+
+  var burst=function(x,y){
+    var types=['peony','chrysanthemum','ring','willow','rainbow','heart'];
+    var type=types[Math.floor(Math.random()*types.length)];
+    var count= type==='willow'?260 : type==='ring'?200 : type==='heart'?220 : 210;
+    var baseHue=Math.random()*360;
+    for(var i=0;i<count;i++){
+      var t=i/count, angle=Math.PI*2*t;
+      var speed=0, hue=baseHue, size=Math.random()*1.8+1.1, gravity=.035, drag=.985;
+      if(type==='peony'){ speed=Math.random()*2.4+3.2; hue=baseHue+(Math.random()*40-20); }
+      else if(type==='chrysanthemum'){ speed=Math.random()*2.6+3.6; hue=baseHue+(Math.random()*50-25); }
+      else if(type==='ring'){ speed=4.8; size=1.5; hue=baseHue+i; }
+      else if(type==='willow'){ speed=Math.random()*1.4+3.2; gravity=.06; drag=.992; size=Math.random()*2.0+1.2; hue=baseHue+(Math.random()*30-15); }
+      else if(type==='rainbow'){ speed=Math.random()*2.0+3.0; hue=(i/count)*360; }
+      else if(type==='heart'){
+        var th=angle, r=1-Math.sin(th), sx=Math.cos(th)*r, sy=Math.sin(th)*r; speed=Math.random()*1.5+2.6;
+        particles.push({x:x,y:y,vx:sx*speed+(Math.random()-.5)*0.35, vy:sy*speed+(Math.random()-.5)*0.35, alpha:1, size:size, hue:(baseHue+Math.random()*20-10+360)%360, gravity:.035, drag:drag});
+        continue;
+      }
+      particles.push({x:x,y:y, vx:Math.cos(angle)*speed+(Math.random()-.2)*0.4, vy:Math.sin(angle)*speed+(Math.random()-.2)*0.4, alpha:1, size:size, hue:(hue+360)%360, gravity:gravity, drag:drag});
+    }
+  };
+
+  var tick=function(ts){
+    var dt=Math.min(0.033,(ts-lastTime)/1000||0.016); lastTime=ts;
+    ctx.globalCompositeOperation='destination-out';
+    ctx.fillStyle='rgba(0,0,0,0.14)';
+    ctx.fillRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+
+    for(var i=rockets.length-1;i>=0;i--){
+      var r=rockets[i];
+      r.trail.push({x:r.x,y:r.y,alpha:1,hue:r.color}); if(r.trail.length>12) r.trail.shift();
+      r.x+=r.vx; r.y+=r.vy; r.vy+=0.08; r.life-=.012;
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(r.x,r.y,2.2,0,Math.PI*2); ctx.fill();
+      for(var t=0;t<r.trail.length;t++){ var tr=r.trail[t]; tr.alpha-=0.08; ctx.fillStyle=hsla(r.color,100,70,Math.max(tr.alpha,0)); ctx.beginPath(); ctx.arc(tr.x,tr.y,1.6,0,Math.PI*2); ctx.fill(); }
+      if(r.vy>=-0.8 || r.life<=0 || r.y<random(H*0.18,H*0.35)){ burst(r.x,r.y); rockets.splice(i,1); }
+    }
+
+    for(var j=particles.length-1;j>=0;j--){ var p=particles[j]; p.vx*=p.drag; p.vy*=p.drag; p.vy+=p.gravity; p.x+=p.vx; p.y+=p.vy; p.alpha-=.008; if(p.alpha<=0){ particles.splice(j,1); continue; } ctx.fillStyle=hsla(p.hue,90,60,p.alpha); ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); }
+
+    requestAnimationFrame(tick);
+  };
+  </script>
+</body>
+</html>
